@@ -1,0 +1,37 @@
+version: '3'
+services:
+  mysql_db:
+    image: mysql # lấy image từ hub.docker.com về cài đặt
+    container_name: mysql_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=db_food
+    ports:
+      - 3307:3306
+    volumes:
+      - mysql_db:/var/lib/mysql
+    networks:
+      - node-network
+  app:
+    depends_on:
+      - mysql_db
+    build: .
+    container_name: cons-node
+    environment:
+      - DATABASE_URL=mysql://root:1234@mysql_db:3307/db_food?schema=public
+    ports:
+      - 3200:8080
+    networks:
+      - node-network
+
+volumes:
+  mysql_db:
+    driver: local
+networks:
+  node-network:
+
+    # docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 mysql
+    # container node BE
+
+    # docker build . -t img-node
+    # docker-compose up -d
